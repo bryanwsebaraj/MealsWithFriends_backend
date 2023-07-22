@@ -17,4 +17,12 @@ func (s *Server) initializeRoutes() {
 	s.Router.HandleFunc("/users/{id}", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(s.UpdateUser))).Methods("PUT")
 	s.Router.HandleFunc("/users/{id}", middlewares.SetMiddlewareAuthentication(s.DeleteUser)).Methods("DELETE")
 
+	//College routes
+	s.Router.HandleFunc("/colleges", middlewares.SetMiddlewareJSON(s.GetColleges)).Methods("GET")
+	s.Router.HandleFunc("/colleges/{id}", middlewares.SetMiddlewareJSON(s.GetCollege)).Methods("GET")
+
+	//University routes
+	s.Router.HandleFunc("/universities", middlewares.SetMiddlewareJSON(s.GetUniversities)).Methods("GET")
+	s.Router.HandleFunc("/universities/{id}", middlewares.SetMiddlewareJSON(s.GetUniversity)).Methods("GET")
+
 }

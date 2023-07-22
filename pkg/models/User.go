@@ -13,20 +13,19 @@ import (
 )
 
 type User struct {
-	ID         uint32  `gorm:"primary_key;auto_increment" json:"id"`
-	FirstName  string  `gorm:"size:255;not null" json:"firstname"`
-	MiddleName string  `gorm:"size:255" json:"middlename"`
-	LastName   string  `gorm:"size:255;not null" json:"lastname"`
-	Email      string  `gorm:"size:100;not null;unique" json:"email"`
-	Password   string  `gorm:"size:100;not null;" json:"password"`
-	Gender     string  `gorm:"size:100" json:"gender"`         // restrict input format on front-end based on tables on back-end
-	GradeLevel string  `gorm:"size:100;not null" json:"grade"` //^^
-	College    College `gorm:"not null" json:"college"`
-	Meals      []Meal  `gorm:"many2many:user_matches" json:"user_matches"`
-	//TimePreferences []TimePreference `gorm:`
-	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
-	UpdatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
-	DeletedAt time.Time `json:"deleted_at"`
+	ID              uint32           `gorm:"primary_key;auto_increment" json:"id"`
+	FirstName       string           `gorm:"size:255;not null" json:"firstname"`
+	MiddleName      string           `gorm:"size:255" json:"middlename"`
+	LastName        string           `gorm:"size:255;not null" json:"lastname"`
+	Email           string           `gorm:"size:100;not null;unique" json:"email"`
+	Password        string           `gorm:"size:100;not null;" json:"password"`
+	Gender          string           `gorm:"size:100" json:"gender"`         // restrict input format on front-end based on tables on back-end
+	GradeLevel      string           `gorm:"size:100;not null" json:"grade"` //^^
+	College         College          `gorm:"not null" json:"college"`
+	Meals           []Meal           `gorm:"many2many:user_matches" json:"user_matches"`
+	TimePreferences []TimePreference `gorm:"" json:"time_preferences"`
+	CreatedAt       time.Time        `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
+	UpdatedAt       time.Time        `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
 }
 
 func Hash(password string) ([]byte, error) {
@@ -124,6 +123,7 @@ func (u *User) SaveUser(db *gorm.DB) (*User, error) {
 	return u, nil
 }
 
+// do not need in current implementation, but could be useful for a "friend" feature in the future
 func (u *User) FindAllUsers(db *gorm.DB) (*[]User, error) {
 	var err error
 	users := []User{}
@@ -147,25 +147,25 @@ func (u *User) FindUserByID(db *gorm.DB, uid uint32) (*User, error) {
 }
 
 func (u *User) UpdateAUser(db *gorm.DB, uid uint32) (*User, error) {
-
-	// To hash the password
 	err := u.BeforeSave()
 	if err != nil {
 		log.Fatal(err)
 	}
 	db = db.Debug().Model(&User{}).Where("id = ?", uid).Take(&User{}).UpdateColumns(
 		map[string]interface{}{
-			"password":  u.Password,
-			"firstname": u.FirstName,
-			"lastname":  u.LastName,
-			"email":     u.Email,
-			"update_at": time.Now(),
+			"password":   u.Password,
+			"firstname":  u.FirstName,
+			"middlename": u.MiddleName,
+			"lastname":   u.LastName,
+			"email":      u.Email,
+			"gender":     u.Gender,
+			"grade":      u.GradeLevel,
+			"update_at":  time.Now(),
 		},
 	)
 	if db.Error != nil {
 		return &User{}, db.Error
 	}
-	// This is the display the updated user
 	err = db.Debug().Model(&User{}).Where("id = ?", uid).Take(&u).Error
 	if err != nil {
 		return &User{}, err
