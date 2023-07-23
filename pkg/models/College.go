@@ -11,13 +11,14 @@ import (
 )
 
 type College struct {
-	ID         uint32     `gorm:"primary_key;auto_increment" json:"id"` //  should this be a primary key or should college and uni be primary key?
-	College    string     `gorm:"size:255;not null" json:"college"`
-	University University `gorm:"size:255;not null" json:"university"`
-	City       string     `gorm:"size:255" json:"city"`
-	State      string     `gorm:"size:100" json:"state"`
-	CreatedAt  time.Time  `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
-	UpdatedAt  time.Time  `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
+	ID           uint32    `gorm:"primary_key;auto_increment" json:"id"` //  should this be a primary key or should college and uni be primary key?
+	College      string    `gorm:"size:255;not null" json:"college"`
+	UniversityID uint32    `gorm:"primary_key;size:255;not null" json:"university"`
+	City         string    `gorm:"size:255" json:"city"`
+	State        string    `gorm:"size:100" json:"state"`
+	Users        []User    `json:"user_list"`
+	CreatedAt    time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
+	UpdatedAt    time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
 }
 
 // just be able to read colleges. should not be able to create, update, or delete

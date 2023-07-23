@@ -10,22 +10,24 @@ import (
 
 var users = []models.User{
 	models.User{
-		FirstName:  "Bryan",
-		LastName:   "SebaRaj",
-		Email:      "bryanwsebaraj@gmail.com",
-		Password:   "pass",
-		Gender:     "Male",
-		GradeLevel: "sophomore",
-		College:    colleges[0],
+		FirstName:    "Bryan",
+		LastName:     "SebaRaj",
+		Email:        "bryanwsebaraj@gmail.com",
+		Password:     "pass",
+		Gender:       "Male",
+		GradeLevel:   "sophomore",
+		CollegeID:    1,
+		UniversityID: 1,
 	},
 	models.User{
-		FirstName:  "George",
-		LastName:   "Washington",
-		Email:      "georgew@freedom.usa",
-		Password:   "usa",
-		Gender:     "Male",
-		GradeLevel: "senior",
-		College:    colleges[1],
+		FirstName:    "George",
+		LastName:     "Washington",
+		Email:        "georgew@freedom.usa",
+		Password:     "usa",
+		Gender:       "Male",
+		GradeLevel:   "senior",
+		CollegeID:    2,
+		UniversityID: 1,
 	},
 }
 

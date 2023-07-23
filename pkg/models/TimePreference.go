@@ -11,7 +11,7 @@ import (
 )
 
 type TimePreference struct {
-	UserID User `gorm:"primary_key;not null;autoIncrement:false" json:"id"`
+	UserID uint32 `gorm:"primary_key;not null;autoIncrement:false" json:"id"`
 	//Date   time.Time
 
 	Day   int        `gorm:"primary_key;not null" json:"day"`
