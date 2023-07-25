@@ -5,11 +5,11 @@ import (
 )
 
 var universities = []models.University{
-	models.University{
+	{
 		UniversityName: "Yale University",
 		AthleticConf:   "Ivy League",
 	},
-	models.University{
+	{
 		UniversityName: "Harvard University",
 		AthleticConf:   "Ivy League",
 	},

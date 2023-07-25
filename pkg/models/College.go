@@ -12,10 +12,10 @@ import (
 
 type College struct {
 	ID           uint32    `gorm:"primary_key;auto_increment" json:"id"` //  should this be a primary key or should college and uni be primary key?
-	College      string    `gorm:"size:255;not null" json:"college"`
+	College      string    `gorm:"size:100;not null" json:"college"`
 	UniversityID uint32    `gorm:"primary_key;size:255;not null" json:"university"`
-	City         string    `gorm:"size:255" json:"city"`
-	State        string    `gorm:"size:100" json:"state"`
+	City         string    `gorm:"size:100" json:"city"`
+	State        string    `gorm:"size:10" json:"state"`
 	Users        []User    `json:"user_list"`
 	CreatedAt    time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdatedAt    time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
@@ -25,9 +25,22 @@ type College struct {
 func (c *College) FindAllColleges(db *gorm.DB) (*[]College, error) {
 	var err error
 	colleges := []College{}
-	err = db.Debug().Model(&College{}).Limit(100).Find(&colleges).Error
+	err = db.Debug().Model(&College{}).Limit(500).Find(&colleges).Error
 	if err != nil {
 		return &[]College{}, err
+	}
+	return &colleges, err
+}
+
+func (c *College) FindCollegesByUni(db *gorm.DB, unid uint32) (*[]College, error) {
+	var err error
+	colleges := []College{}
+	err = db.Debug().Model(College{}).Where("university_id <> ?", unid).Find(&colleges).Error
+	if err != nil {
+		return &[]College{}, err
+	}
+	if gorm.IsRecordNotFoundError(err) {
+		return &[]College{}, errors.New("University Not Found")
 	}
 	return &colleges, err
 }
