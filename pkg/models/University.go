@@ -33,11 +33,12 @@ func (uni *University) FindAllUniversities(db *gorm.DB) (*[]University, error) {
 func (uni *University) FindUniversityByID(db *gorm.DB, unid uint32) (*University, error) {
 	var err error
 	err = db.Debug().Model(University{}).Where("id = ?", unid).Take(&uni).Error
-	if err != nil {
-		return &University{}, err
-	}
 	if gorm.IsRecordNotFoundError(err) {
 		return &University{}, errors.New("University Not Found")
 	}
+	if err != nil {
+		return &University{}, err
+	}
+
 	return uni, err
 }

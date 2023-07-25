@@ -31,7 +31,7 @@ func (server *Server) Initialize(DbUser, DbPassword, DbPort, DbHost, DbName stri
 		fmt.Printf("We are connected to the postgres database")
 	}
 
-	server.DB.Debug().AutoMigrate(&models.User{}) //, &models.Match{} database migration
+	server.DB.Debug().AutoMigrate(&models.User{}, &models.TimePreference{}, &models.College{}, &models.University{}) //, &models.Match{} database migration
 
 	server.Router = mux.NewRouter()
 

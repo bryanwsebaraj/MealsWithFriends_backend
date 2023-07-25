@@ -35,24 +35,25 @@ func (c *College) FindAllColleges(db *gorm.DB) (*[]College, error) {
 func (c *College) FindCollegesByUni(db *gorm.DB, unid uint32) (*[]College, error) {
 	var err error
 	colleges := []College{}
-	err = db.Debug().Model(College{}).Where("university_id <> ?", unid).Find(&colleges).Error
-	if err != nil {
-		return &[]College{}, err
-	}
+	err = db.Debug().Model(College{}).Where("university_id = ?", unid).Find(&colleges).Error
 	if gorm.IsRecordNotFoundError(err) {
 		return &[]College{}, errors.New("University Not Found")
 	}
+	if err != nil {
+		return &[]College{}, err
+	}
+
 	return &colleges, err
 }
 
 func (c *College) FindCollegeByID(db *gorm.DB, cid uint32) (*College, error) {
 	var err error
 	err = db.Debug().Model(College{}).Where("id = ?", cid).Take(&c).Error
-	if err != nil {
-		return &College{}, err
-	}
 	if gorm.IsRecordNotFoundError(err) {
 		return &College{}, errors.New("College Not Found")
+	}
+	if err != nil {
+		return &College{}, err
 	}
 	return c, err
 }

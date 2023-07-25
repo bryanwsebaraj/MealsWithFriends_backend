@@ -20,7 +20,7 @@ func (s *Server) initializeRoutes() {
 	//College routes
 	s.Router.HandleFunc("/colleges", middlewares.SetMiddlewareJSON(s.GetColleges)).Methods("GET")
 	s.Router.HandleFunc("/colleges/{id}", middlewares.SetMiddlewareJSON(s.GetCollege)).Methods("GET")
-	s.Router.HandleFunc("/colleges/{university}", middlewares.SetMiddlewareJSON(s.GetCollegesByUni)).Methods("GET")
+	s.Router.HandleFunc("/collegesByUni/{university}", middlewares.SetMiddlewareJSON(s.GetCollegesByUni)).Methods("GET")
 
 	//University routes
 	s.Router.HandleFunc("/universities", middlewares.SetMiddlewareJSON(s.GetUniversities)).Methods("GET")
@@ -29,8 +29,8 @@ func (s *Server) initializeRoutes() {
 	//TimePreference routes
 	s.Router.HandleFunc("/timepreferences", middlewares.SetMiddlewareJSON(s.GetAllTimePref)).Methods("GET")
 	s.Router.HandleFunc("/timepreferences/{user_id}", middlewares.SetMiddlewareJSON(s.GetTimePrefsByUser)).Methods("GET")
-	s.Router.HandleFunc("/timepreferences/{date}", middlewares.SetMiddlewareJSON(s.GetTimePrefsByDate)).Methods("GET")
-	s.Router.HandleFunc("/timepreferences/{?}", middlewares.SetMiddlewareJSON(s.GetTimePrefByUserDate)).Methods("GET")
-	s.Router.HandleFunc("/timepreferences/{?}", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(s.UpdateTimePref))).Methods("PUT")
+	s.Router.HandleFunc("/timepreferencesByDate/{date}", middlewares.SetMiddlewareJSON(s.GetTimePrefsByDate)).Methods("GET")
+	s.Router.HandleFunc("/timepreferences/{user_id}/{date}", middlewares.SetMiddlewareJSON(s.GetTimePrefByUserDate)).Methods("GET")
+	s.Router.HandleFunc("/timepreferences/{user_id}/{date}", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(s.UpdateTimePref))).Methods("PUT")
 
 }

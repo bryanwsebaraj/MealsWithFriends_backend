@@ -10,7 +10,7 @@ import (
 
 type TimePreference struct {
 	UserID         uint32    `gorm:"primary_key;not null" json:"user_id"`
-	Date           time.Time `gorm:"primary_key;not null" json:"date"`
+	Date           time.Time `gorm:"primary_key" json:"date"`
 	LunchSlot      uint32    `gorm:"size:255" json:"lunchslot"`
 	DinnerSlot     uint32    `gorm:"size:255" json:"dinnerslot"`
 	LunchResponse  bool      `gorm:"size:255" json:"lunchres"`
@@ -23,27 +23,31 @@ func cleanDate(date time.Time) time.Time {
 	return time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC)
 }
 
-func (timePref *TimePreference) Prepare(u *User) {
+func (timePref *TimePreference) SaveTimePreference(db *gorm.DB, uid uint32) (*TimePreference, error) {
+	var err error
+	timePref.UserID = uid
 	timePref.Date = time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, time.UTC)
+	timePref.LunchSlot = 0
+	timePref.DinnerSlot = 0
 	timePref.LunchResponse = false
 	timePref.DinnerResponse = false
 	timePref.CreatedAt = time.Now()
 	timePref.UpdatedAt = time.Now()
+	err = db.Debug().Create(&timePref).Error
+	if err != nil {
+		return &TimePreference{}, err
+	}
+
+	return timePref, nil
 }
 
 func (timePref *TimePreference) ValidateTimePref() error {
 	timePref.UpdatedAt = time.Now()
-	if reflect.TypeOf(timePref.LunchSlot).Kind() == reflect.Uint32 {
+	if reflect.TypeOf(timePref.LunchSlot).Kind() != reflect.Uint32 {
 		return errors.New("Lunch Slot not uint32")
 	}
-	if reflect.TypeOf(timePref.DinnerSlot).Kind() == reflect.Uint32 {
+	if reflect.TypeOf(timePref.DinnerSlot).Kind() != reflect.Uint32 {
 		return errors.New("Lunch Slot not uint32")
-	}
-	if reflect.TypeOf(timePref.DinnerSlot).Kind() == reflect.Bool {
-		return errors.New("Lunch Slot not boolean")
-	}
-	if reflect.TypeOf(timePref.DinnerSlot).Kind() == reflect.Bool {
-		return errors.New("Lunch Slot not boolean")
 	}
 	return nil
 }
@@ -61,7 +65,7 @@ func (timePref *TimePreference) FindAllTimePrefences(db *gorm.DB) (*[]TimePrefer
 func (timePref *TimePreference) FindTimePrefsByUser(db *gorm.DB, uid uint32) (*[]TimePreference, error) {
 	var err error
 	timePrefs := []TimePreference{}
-	err = db.Debug().Model(TimePreference{}).Where("user_id <> ?", uid).Find(&timePrefs).Error
+	err = db.Debug().Model(TimePreference{}).Where("user_id = ?", uid).Find(&timePrefs).Error
 	if err != nil {
 		return &[]TimePreference{}, err
 	}
@@ -71,7 +75,7 @@ func (timePref *TimePreference) FindTimePrefsByUser(db *gorm.DB, uid uint32) (*[
 func (timePref *TimePreference) FindTimePrefsByDate(db *gorm.DB, date time.Time) (*[]TimePreference, error) {
 	var err error
 	timePrefs := []TimePreference{}
-	err = db.Debug().Model(TimePreference{}).Where("date <> ?", cleanDate(date)).Find(&timePrefs).Error
+	err = db.Debug().Model(TimePreference{}).Where("date = ?", cleanDate(date)).Find(&timePrefs).Error
 	if err != nil {
 		return &[]TimePreference{}, err
 	}
@@ -90,24 +94,15 @@ func (timePref *TimePreference) FindTimePrefByUserDate(db *gorm.DB, uid uint32, 
 	return timePref, err
 }
 
-func (timePref *TimePreference) SaveTimePreference(db *gorm.DB) (*TimePreference, error) {
-	var err error
-	err = db.Debug().Create(&timePref).Error
-	if err != nil {
-		return &TimePreference{}, err
-	}
-	return timePref, nil
-}
-
 func (timePref *TimePreference) UpdateTimePref(db *gorm.DB, uid uint32, date time.Time) (*TimePreference, error) {
 
 	db = db.Debug().Model(&TimePreference{}).Where("user_id = ? AND date = ?", uid, cleanDate(date)).Take(&TimePreference{}).UpdateColumns(
 		map[string]interface{}{
-			"lunchslot":  timePref.LunchSlot,
-			"dinnerslot": timePref.DinnerSlot,
-			"lunchres":   timePref.LunchResponse,
-			"dinnerres":  timePref.DinnerResponse,
-			"updated_at": time.Now(),
+			"lunch_slot":      timePref.LunchSlot,
+			"dinner_slot":     timePref.DinnerSlot,
+			"lunch_response":  timePref.LunchResponse,
+			"dinner_response": timePref.DinnerResponse,
+			"updated_at":      time.Now(),
 		},
 	)
 	if db.Error != nil {

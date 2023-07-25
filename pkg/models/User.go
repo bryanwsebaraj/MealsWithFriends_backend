@@ -36,6 +36,10 @@ func VerifyPassword(hashedPassword, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }
 
+func (u *User) GetID() uint32 {
+	return u.ID
+}
+
 func (u *User) BeforeSave() error {
 	hashedPassword, err := Hash(u.Password)
 	if err != nil {
@@ -76,6 +80,9 @@ func (u *User) Validate(action string) error {
 		if u.GradeLevel == "" {
 			return errors.New("Required Grade Level")
 		}
+		if u.CollegeID == 0 {
+			return errors.New("Required College")
+		}
 
 		return nil
 	case "login":
@@ -109,6 +116,9 @@ func (u *User) Validate(action string) error {
 		if u.GradeLevel == "" {
 			return errors.New("Required Grade Level")
 		}
+		if u.CollegeID == 0 {
+			return errors.New("Required College")
+		}
 		return nil
 	}
 }
@@ -123,11 +133,10 @@ func (u *User) SaveUser(db *gorm.DB) (*User, error) {
 	return u, nil
 }
 
-// do not need in current implementation, but could be useful for a "friend" feature in the future
 func (u *User) FindAllUsers(db *gorm.DB) (*[]User, error) {
 	var err error
 	users := []User{}
-	err = db.Debug().Model(&User{}).Limit(100).Find(&users).Error
+	err = db.Debug().Model(&User{}).Limit(10000).Find(&users).Error
 	if err != nil {
 		return &[]User{}, err
 	}
@@ -153,14 +162,14 @@ func (u *User) UpdateAUser(db *gorm.DB, uid uint32) (*User, error) {
 	}
 	db = db.Debug().Model(&User{}).Where("id = ?", uid).Take(&User{}).UpdateColumns(
 		map[string]interface{}{
-			"password":   u.Password,
-			"firstname":  u.FirstName,
-			"middlename": u.MiddleName,
-			"lastname":   u.LastName,
-			"email":      u.Email,
-			"gender":     u.Gender,
-			"grade":      u.GradeLevel,
-			"updated_at": time.Now(),
+			"password":    u.Password,
+			"first_name":  u.FirstName,
+			"middle_name": u.MiddleName,
+			"last_name":   u.LastName,
+			"email":       u.Email,
+			"gender":      u.Gender,
+			"grade_level": u.GradeLevel,
+			"updated_at":  time.Now(),
 		},
 	)
 	if db.Error != nil {

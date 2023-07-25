@@ -30,12 +30,22 @@ var users = []models.User{
 		CollegeID:  2,
 		//UniversityID: 1,
 	},
+	{
+		FirstName:  "John",
+		LastName:   "Adams",
+		Email:      "ja@gmail.com",
+		Password:   "usa",
+		Gender:     "Male",
+		GradeLevel: "junior",
+		CollegeID:  2,
+		//UniversityID: 1,
+	},
 }
 
 var timePreferences = []models.TimePreference{
 	{
 		UserID:         2,
-		Date:           time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, time.UTC),
+		Date:           time.Date(time.Now().Year(), time.Now().Month(), (time.Now().Day() - 1), 0, 0, 0, 0, time.UTC),
 		LunchSlot:      1,
 		DinnerSlot:     2,
 		LunchResponse:  false,
@@ -43,7 +53,15 @@ var timePreferences = []models.TimePreference{
 	},
 	{
 		UserID:         1,
-		Date:           time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, time.UTC),
+		Date:           time.Date(time.Now().Year(), time.Now().Month(), (time.Now().Day() - 1), 0, 0, 0, 0, time.UTC),
+		LunchSlot:      2,
+		DinnerSlot:     2,
+		LunchResponse:  true,
+		DinnerResponse: true,
+	},
+	{
+		UserID:         3,
+		Date:           time.Date(time.Now().Year(), time.Now().Month(), (time.Now().Day() - 1), 0, 0, 0, 0, time.UTC),
 		LunchSlot:      2,
 		DinnerSlot:     2,
 		LunchResponse:  true,

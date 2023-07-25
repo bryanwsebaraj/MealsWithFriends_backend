@@ -43,7 +43,7 @@ func (server *Server) GetTimePrefsByUser(w http.ResponseWriter, r *http.Request)
 
 func (server *Server) GetTimePrefsByDate(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	date, err := time.Parse("2000-01-01", vars["date"])
+	date, err := time.Parse("2006-Jan-02", vars["date"])
 	if err != nil {
 		responses.ERROR(w, http.StatusBadRequest, err)
 		return
@@ -64,7 +64,7 @@ func (server *Server) GetTimePrefByUserDate(w http.ResponseWriter, r *http.Reque
 		responses.ERROR(w, http.StatusBadRequest, err)
 		return
 	}
-	date, err := time.Parse("2000-01-01", vars["date"])
+	date, err := time.Parse("2006-Jan-02", vars["date"])
 	if err != nil {
 		responses.ERROR(w, http.StatusBadRequest, err)
 		return
@@ -85,7 +85,7 @@ func (server *Server) UpdateTimePref(w http.ResponseWriter, r *http.Request) {
 		responses.ERROR(w, http.StatusBadRequest, err)
 		return
 	}
-	date, err := time.Parse("2000-01-01", vars["date"])
+	date, err := time.Parse("2006-Jan-02", vars["date"])
 	if err != nil {
 		responses.ERROR(w, http.StatusBadRequest, err)
 		return
