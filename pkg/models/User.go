@@ -19,10 +19,10 @@ type User struct {
 	LastName        string           `gorm:"size:100;not null" json:"lastname"`
 	Email           string           `gorm:"size:100;not null;unique" json:"email"`
 	Password        string           `gorm:"size:100;not null;" json:"password"`
-	Gender          string           `gorm:"size:10" json:"gender"`         // restrict input format on front-end based on tables on back-end
+	Gender          string           `gorm:"size:10" json:"gender"`         // restrict input format on front-end (drop down menu?) (M/F/NB/T/O)
 	GradeLevel      string           `gorm:"size:10;not null" json:"grade"` //^^
 	CollegeID       uint32           `gorm:"not null" json:"college"`
-	Meals           []Meal           `gorm:"many2many:user_matches" json:"user_matches"`
+	Meals           []Meal           `gorm:"many2many:user_meals,foreignKey" json:"meals"`
 	TimePreferences []TimePreference `json:"time_preferences"`
 	CreatedAt       time.Time        `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdatedAt       time.Time        `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`

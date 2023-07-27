@@ -12,7 +12,7 @@ import (
 
 type University struct {
 	ID             uint32    `gorm:"primary_key;auto_increment" json:"id"`
-	UniversityName string    `gorm:"size:255;not null;unique" json:"uniname"`
+	UniversityName string    `gorm:"size:255;not null" json:"uniname"`
 	AthleticConf   string    `gorm:"size:255" json:"athconf"`
 	Colleges       []College `json:"college_list"`
 	//Users          []User    `json:"user_list"`

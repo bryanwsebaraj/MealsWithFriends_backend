@@ -20,13 +20,13 @@ type TimePreference struct {
 }
 
 func cleanDate(date time.Time) time.Time {
-	return time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.UTC)
+	return time.Date(date.Year(), date.Month(), date.Day(), 20, 0, 0, 0, time.Local)
 }
 
 func (timePref *TimePreference) SaveTimePreference(db *gorm.DB, uid uint32) (*TimePreference, error) {
 	var err error
 	timePref.UserID = uid
-	timePref.Date = time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, time.UTC)
+	timePref.Date = time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, time.Local)
 	timePref.LunchSlot = 0
 	timePref.DinnerSlot = 0
 	timePref.LunchResponse = false
