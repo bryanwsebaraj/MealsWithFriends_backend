@@ -1,11 +1,8 @@
 package scripts
 
 import (
-	//"log"
 	"fmt"
 	"time"
-
-	//"github.com/bryanwsebaraj/mealswithfriends/pkg/models"
 
 	"github.com/jinzhu/gorm"
 )
@@ -24,7 +21,7 @@ func AddOnTime(db *gorm.DB) {
 			AddMealMatches(db)
 		}
 
-		// Wait for a short duration before checking again
+		// Wait before checking again
 		time.Sleep(60 * time.Minute)
 	}
 }

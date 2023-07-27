@@ -2,9 +2,6 @@ package models
 
 import (
 	"errors"
-	//"html"
-	//"log"
-	//"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -15,9 +12,8 @@ type University struct {
 	UniversityName string    `gorm:"size:255;not null" json:"uniname"`
 	AthleticConf   string    `gorm:"size:255" json:"athconf"`
 	Colleges       []College `json:"college_list"`
-	//Users          []User    `json:"user_list"`
-	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
-	UpdatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
+	CreatedAt      time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
+	UpdatedAt      time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
 }
 
 func (uni *University) FindAllUniversities(db *gorm.DB) (*[]University, error) {

@@ -8,9 +8,7 @@ import (
 	"github.com/bryanwsebaraj/mealswithfriends/pkg/models"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
-
-	_ "github.com/jinzhu/gorm/dialects/postgres" //postgres database driver
-	//"github.com/bryanwsebaraj/mealswithfriends/pkg/models"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 type Server struct {
@@ -19,16 +17,14 @@ type Server struct {
 }
 
 func (server *Server) Initialize(DbUser, DbPassword, DbPort, DbHost, DbName string) {
-
 	var err error
-
 	DBURL := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s", DbHost, DbPort, DbUser, DbName, DbPassword)
 	server.DB, err = gorm.Open("postgres", DBURL)
 	if err != nil {
 		fmt.Printf("Cannot connect to postgres database")
-		log.Fatal("This is the error:", err)
+		log.Fatal("Error:", err)
 	} else {
-		fmt.Printf("We are connected to the postgres database")
+		fmt.Printf("Connected to the postgres database")
 	}
 
 	server.DB.Debug().AutoMigrate(&models.User{}, &models.TimePreference{}, &models.College{}, &models.University{}, &models.Meal{}) // database migration

@@ -11,9 +11,7 @@ import (
 )
 
 func (server *Server) GetColleges(w http.ResponseWriter, r *http.Request) {
-
 	college := models.College{}
-
 	colleges, err := college.FindAllColleges(server.DB)
 	if err != nil {
 		responses.ERROR(w, http.StatusInternalServerError, err)
@@ -39,7 +37,6 @@ func (server *Server) GetCollegesByUni(w http.ResponseWriter, r *http.Request) {
 }
 
 func (server *Server) GetCollege(w http.ResponseWriter, r *http.Request) {
-
 	vars := mux.Vars(r)
 	cid, err := strconv.ParseUint(vars["id"], 10, 32)
 	if err != nil {

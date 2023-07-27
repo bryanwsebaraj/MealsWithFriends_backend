@@ -19,7 +19,6 @@ var users = []models.User{
 		Gender:     "Male",
 		GradeLevel: "sophomore",
 		CollegeID:  1,
-		//UniversityID: 1,
 	},
 	{
 		FirstName:  "George",
@@ -29,7 +28,6 @@ var users = []models.User{
 		Gender:     "Male",
 		GradeLevel: "senior",
 		CollegeID:  2,
-		//UniversityID: 1,
 	},
 	{
 		FirstName:  "John",
@@ -39,7 +37,6 @@ var users = []models.User{
 		Gender:     "Male",
 		GradeLevel: "junior",
 		CollegeID:  2,
-		//UniversityID: 1,
 	},
 }
 

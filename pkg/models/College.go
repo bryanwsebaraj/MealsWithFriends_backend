@@ -2,16 +2,14 @@ package models
 
 import (
 	"errors"
-	//"html"
-	//"log"
-	//"strings"
+
 	"time"
 
 	"github.com/jinzhu/gorm"
 )
 
 type College struct {
-	ID           uint32    `gorm:"primary_key;auto_increment" json:"id"` //  should this be a primary key or should college and uni be primary key?
+	ID           uint32    `gorm:"primary_key;auto_increment" json:"id"`
 	College      string    `gorm:"size:100;not null" json:"college"`
 	UniversityID uint32    `gorm:"primary_key;size:255;not null" json:"university"`
 	City         string    `gorm:"size:100" json:"city"`

@@ -2,11 +2,6 @@ package models
 
 import (
 	"errors"
-	"fmt"
-
-	//"html"
-	//"log"
-	//"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -32,11 +27,11 @@ func (m *Meal) SaveMeal(db *gorm.DB, mealType string, date time.Time, timeslot u
 	m.IsActive = true
 	m.CreatedAt = time.Now()
 	m.UpdatedAt = time.Now()
+
 	err := db.Debug().Create(&m).Error
 	if err != nil {
 		return &Meal{}, err
 	}
-
 	return m, nil
 }
 
@@ -46,7 +41,6 @@ func ValidateMealType(mealType string) (string, error) {
 	} else {
 		return mealType, errors.New("Invalid string")
 	}
-
 }
 
 func (m *Meal) DeactivateMeal(db *gorm.DB) {
@@ -69,12 +63,11 @@ func (m *Meal) FindMealsByUserID(db *gorm.DB, uid uint32) (*[]Meal, error) {
 	if err != nil {
 		return &[]Meal{}, errors.New("User Not Found")
 	}
+
 	err = db.Model(&User{}).Preload("Meals").Take(&userGotten).Error
 	if err != nil {
 		return &[]Meal{}, errors.New("Meals Not Found")
 	}
-	//fmt.Println(userGotten)
-
 	meals := userGotten.Meals
 	return &meals, err
 }
@@ -85,24 +78,19 @@ func (m *Meal) FindMealByUserIDDate(db *gorm.DB, uid uint32, date time.Time, mea
 	if err != nil {
 		return &Meal{}, errors.New("User Not Found")
 	}
+
 	err = db.Model(&User{}).Preload("Meals").Take(&userGotten).Error
 	if err != nil {
 		return &Meal{}, errors.New("Meals Not Found")
 	}
 
 	meals := userGotten.Meals
-	//fmt.Println(meals)
-	meal1 := Meal{}
-	fmt.Println(cleanDate(date))
 	for i := range meals {
 		if cleanDate(date).Equal(meals[i].Date) && meals[i].MealType == meal {
-			//fmt.Println(meals[i])
 			return &meals[i], err
 		}
-		//fmt.Println(meals[i])
 	}
-	//fmt.Println(meal1)
-	return &meal1, err
+	return m, err
 
 }
 
@@ -112,11 +100,11 @@ func (m *Meal) FindUsersByMealID(db *gorm.DB, mid uint32) (*[]User, error) {
 	if err != nil {
 		return &[]User{}, errors.New("Meal Not Found")
 	}
+
 	err = db.Model(&Meal{}).Preload("Users").Take(&mealGotten).Error
 	if err != nil {
 		return &[]User{}, errors.New("Users Not Found")
 	}
-	//fmt.Println(userGotten)
 
 	users := mealGotten.Users
 	return &users, err
@@ -128,11 +116,12 @@ func (m *Meal) FindTimePrefsByMealID(db *gorm.DB, mid uint32) (*[]TimePreference
 	userList := *users
 	timePrefs := []TimePreference{}
 	meal, err := m.FindMealByID(db, mid)
+
 	for i := range *users {
 		timePref := TimePreference{}
 		timePref1, err := timePref.FindTimePrefByUserDate(db, userList[i].ID, meal.Date)
 		if err != nil {
-			return &[]TimePreference{}, errors.New("TP Not Found")
+			return &[]TimePreference{}, errors.New("Time Preference Not Found")
 		}
 		timePrefs = append(timePrefs, *timePref1)
 	}
@@ -144,11 +133,12 @@ func (m *Meal) FindTimePrefsByMealID(db *gorm.DB, mid uint32) (*[]TimePreference
 func (m *Meal) FindMealByID(db *gorm.DB, mid uint32) (*Meal, error) {
 	var err error
 	err = db.Debug().Model(Meal{}).Where("meal_id = ?", mid).Take(&m).Error
-	if err != nil {
-		return &Meal{}, err
-	}
 	if gorm.IsRecordNotFoundError(err) {
 		return &Meal{}, errors.New("Meal Not Found")
 	}
+	if err != nil {
+		return &Meal{}, err
+	}
+
 	return m, err
 }

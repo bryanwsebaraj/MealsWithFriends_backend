@@ -33,6 +33,7 @@ func (timePref *TimePreference) SaveTimePreference(db *gorm.DB, uid uint32) (*Ti
 	timePref.DinnerResponse = false
 	timePref.CreatedAt = time.Now()
 	timePref.UpdatedAt = time.Now()
+
 	err = db.Debug().Create(&timePref).Error
 	if err != nil {
 		return &TimePreference{}, err
@@ -85,17 +86,16 @@ func (timePref *TimePreference) FindTimePrefsByDate(db *gorm.DB, date time.Time)
 func (timePref *TimePreference) FindTimePrefByUserDate(db *gorm.DB, uid uint32, date time.Time) (*TimePreference, error) {
 	var err error
 	err = db.Debug().Model(TimePreference{}).Where("user_id = ? AND date = ?", uid, cleanDate(date)).Take(&timePref).Error
-	if err != nil {
-		return &TimePreference{}, err
-	}
 	if gorm.IsRecordNotFoundError(err) {
 		return &TimePreference{}, errors.New("Time Preference Not Found")
+	}
+	if err != nil {
+		return &TimePreference{}, err
 	}
 	return timePref, err
 }
 
 func (timePref *TimePreference) UpdateTimePref(db *gorm.DB, uid uint32, date time.Time) (*TimePreference, error) {
-
 	db = db.Debug().Model(&TimePreference{}).Where("user_id = ? AND date = ?", uid, cleanDate(date)).Take(&TimePreference{}).UpdateColumns(
 		map[string]interface{}{
 			"lunch_slot":      timePref.LunchSlot,
@@ -105,10 +105,12 @@ func (timePref *TimePreference) UpdateTimePref(db *gorm.DB, uid uint32, date tim
 			"updated_at":      time.Now(),
 		},
 	)
+
 	if db.Error != nil {
 		return &TimePreference{}, db.Error
 	}
 	err := db.Debug().Model(&TimePreference{}).Where("user_id = ? AND date = ?", uid, cleanDate(date)).Take(&timePref).Error
+
 	if err != nil {
 		return &TimePreference{}, err
 	}
@@ -116,9 +118,7 @@ func (timePref *TimePreference) UpdateTimePref(db *gorm.DB, uid uint32, date tim
 }
 
 func (timePref *TimePreference) DeleteATimePref(db *gorm.DB, uid uint32, date time.Time) (int64, error) {
-
 	db = db.Debug().Model(&TimePreference{}).Where("user_id = ? AND date = ?", uid, cleanDate(date)).Take(&TimePreference{}).Delete(&TimePreference{})
-
 	if db.Error != nil {
 		return 0, db.Error
 	}

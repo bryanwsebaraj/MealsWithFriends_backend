@@ -124,7 +124,6 @@ func (u *User) Validate(action string) error {
 }
 
 func (u *User) SaveUser(db *gorm.DB) (*User, error) {
-
 	var err error
 	err = db.Debug().Create(&u).Error
 	if err != nil {
@@ -160,6 +159,7 @@ func (u *User) UpdateAUser(db *gorm.DB, uid uint32) (*User, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	db = db.Debug().Model(&User{}).Where("id = ?", uid).Take(&User{}).UpdateColumns(
 		map[string]interface{}{
 			"password":    u.Password,
@@ -172,6 +172,7 @@ func (u *User) UpdateAUser(db *gorm.DB, uid uint32) (*User, error) {
 			"updated_at":  time.Now(),
 		},
 	)
+
 	if db.Error != nil {
 		return &User{}, db.Error
 	}
@@ -183,9 +184,7 @@ func (u *User) UpdateAUser(db *gorm.DB, uid uint32) (*User, error) {
 }
 
 func (u *User) DeleteAUser(db *gorm.DB, uid uint32) (int64, error) {
-
 	db = db.Debug().Model(&User{}).Where("id = ?", uid).Take(&User{}).Delete(&User{})
-
 	if db.Error != nil {
 		return 0, db.Error
 	}

@@ -33,10 +33,10 @@ func (s *Server) initializeRoutes() {
 	s.Router.HandleFunc("/timepreferences/{user_id}/{date}", middlewares.SetMiddlewareJSON(s.GetTimePrefByUserDate)).Methods("GET")
 	s.Router.HandleFunc("/timepreferences/{user_id}/{date}", middlewares.SetMiddlewareJSON(middlewares.SetMiddlewareAuthentication(s.UpdateTimePref))).Methods("PUT")
 
-	// Meals routes
-	s.Router.HandleFunc("/meals/{user_id}/{date}/{meal}", middlewares.SetMiddlewareJSON(s.GetMealByUserDateMeal)).Methods("GET")
-	s.Router.HandleFunc("/meals/user/{user_id}", middlewares.SetMiddlewareJSON(s.GetMealsForUser)).Methods("GET")
+	// Meal routes
 	s.Router.HandleFunc("/meals/{mid}", middlewares.SetMiddlewareJSON(s.GetMealByID)).Methods("GET")
+	s.Router.HandleFunc("/meals/{user_id}/{date}/{mealtype}", middlewares.SetMiddlewareJSON(s.GetMealByUserDateMeal)).Methods("GET")
+	s.Router.HandleFunc("/meals/user/{user_id}", middlewares.SetMiddlewareJSON(s.GetMealsForUser)).Methods("GET")
 	s.Router.HandleFunc("/meals/users/{mid}", middlewares.SetMiddlewareJSON(s.GetUsersByMeal)).Methods("GET")
 	s.Router.HandleFunc("/meals/timepreferences/{mid}", middlewares.SetMiddlewareJSON(s.GetTimePrefByMeal)).Methods("GET")
 

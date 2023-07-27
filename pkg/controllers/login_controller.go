@@ -19,6 +19,7 @@ func (server *Server) Login(w http.ResponseWriter, r *http.Request) {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
+
 	user := models.User{}
 	err = json.Unmarshal(body, &user)
 	if err != nil {
@@ -32,6 +33,7 @@ func (server *Server) Login(w http.ResponseWriter, r *http.Request) {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
+
 	token, err := server.SignIn(user.Email, user.Password)
 	if err != nil {
 		formattedError := formaterror.FormatError(err.Error())
@@ -42,15 +44,13 @@ func (server *Server) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (server *Server) SignIn(email, password string) (string, error) {
-
 	var err error
-
 	user := models.User{}
-
 	err = server.DB.Debug().Model(models.User{}).Where("email = ?", email).Take(&user).Error
 	if err != nil {
 		return "", err
 	}
+
 	err = models.VerifyPassword(user.Password, password)
 	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
 		return "", err

@@ -32,6 +32,7 @@ func (server *Server) GetTimePrefsByUser(w http.ResponseWriter, r *http.Request)
 		responses.ERROR(w, http.StatusBadRequest, err)
 		return
 	}
+
 	timePrefs := models.TimePreference{}
 	timePrefsGotten, err := timePrefs.FindTimePrefsByUser(server.DB, uint32(uid))
 	if err != nil {
@@ -48,6 +49,7 @@ func (server *Server) GetTimePrefsByDate(w http.ResponseWriter, r *http.Request)
 		responses.ERROR(w, http.StatusBadRequest, err)
 		return
 	}
+
 	timePrefs := models.TimePreference{}
 	timePrefsGotten, err := timePrefs.FindTimePrefsByDate(server.DB, time.Time(date))
 	if err != nil {
@@ -64,11 +66,13 @@ func (server *Server) GetTimePrefByUserDate(w http.ResponseWriter, r *http.Reque
 		responses.ERROR(w, http.StatusBadRequest, err)
 		return
 	}
+
 	date, err := time.Parse("2006-Jan-02", vars["date"])
 	if err != nil {
 		responses.ERROR(w, http.StatusBadRequest, err)
 		return
 	}
+
 	timePrefs := models.TimePreference{}
 	timePrefsGotten, err := timePrefs.FindTimePrefByUserDate(server.DB, uint32(uid), time.Time(date))
 	if err != nil {
@@ -85,22 +89,26 @@ func (server *Server) UpdateTimePref(w http.ResponseWriter, r *http.Request) {
 		responses.ERROR(w, http.StatusBadRequest, err)
 		return
 	}
+
 	date, err := time.Parse("2006-Jan-02", vars["date"])
 	if err != nil {
 		responses.ERROR(w, http.StatusBadRequest, err)
 		return
 	}
+
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
+
 	timePref := models.TimePreference{}
 	err = json.Unmarshal(body, &timePref)
 	if err != nil {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
+
 	tokenID, err := auth.ExtractTokenID(r)
 	if err != nil {
 		responses.ERROR(w, http.StatusUnauthorized, errors.New("Unauthorized"))
@@ -110,11 +118,13 @@ func (server *Server) UpdateTimePref(w http.ResponseWriter, r *http.Request) {
 		responses.ERROR(w, http.StatusUnauthorized, errors.New(http.StatusText(http.StatusUnauthorized)))
 		return
 	}
+
 	err = timePref.ValidateTimePref()
 	if err != nil {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
 		return
 	}
+
 	updatedTimePref, err := timePref.UpdateTimePref(server.DB, uint32(uid), time.Time(date))
 	if err != nil {
 		responses.ERROR(w, http.StatusInternalServerError, err)
