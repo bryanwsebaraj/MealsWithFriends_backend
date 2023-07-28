@@ -16,7 +16,7 @@ func AddOnTime(db *gorm.DB) {
 			AddTimePrefs(db)
 		}
 
-		if now.Hour() == 11 && now.Minute() == 55 {
+		if now.Hour() == now.Hour() && now.Minute() == now.Minute() {
 			fmt.Println("Adding new meal match entries in DB")
 			AddMealMatches(db)
 		}

@@ -13,4 +13,8 @@ var universities = []models.University{
 		UniversityName: "Harvard University",
 		AthleticConf:   "Ivy League",
 	},
+	{
+		UniversityName: "Princeton University",
+		AthleticConf:   "Ivy League",
+	},
 }

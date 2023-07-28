@@ -43,28 +43,28 @@ var users = []models.User{
 var meals = []models.Meal{
 	{
 		MealType: "lunch",
-		Date:     time.Date(time.Now().Year(), time.Now().Month(), (time.Now().Day() - 1), 0, 0, 0, 0, time.UTC),
+		Date:     time.Date(time.Now().Year(), time.Now().Month(), (time.Now().Day() - 1), 20, 0, 0, 0, time.Local),
 		Location: "Timothy Dwight",
 		TimeSlot: 1,
 		IsActive: true,
 	},
 	{
 		MealType: "dinner",
-		Date:     time.Date(time.Now().Year(), time.Now().Month(), (time.Now().Day()), 0, 0, 0, 0, time.UTC),
+		Date:     time.Date(time.Now().Year(), time.Now().Month(), (time.Now().Day() - 1), 20, 0, 0, 0, time.Local),
 		Location: "Silliman",
 		TimeSlot: 2,
 		IsActive: true,
 	},
 	{
 		MealType: "lunch",
-		Date:     time.Date(time.Now().Year(), time.Now().Month(), (time.Now().Day()), 0, 0, 0, 0, time.UTC),
+		Date:     time.Date(time.Now().Year(), time.Now().Month(), (time.Now().Day() - 1), 20, 0, 0, 0, time.Local),
 		Location: "Silliman",
 		TimeSlot: 2,
 		IsActive: true,
 	},
 	{
 		MealType: "dinner",
-		Date:     time.Date(time.Now().Year(), time.Now().Month(), (time.Now().Day()), 0, 0, 0, 0, time.UTC),
+		Date:     time.Date(time.Now().Year(), time.Now().Month(), (time.Now().Day() - 1), 20, 0, 0, 0, time.Local),
 		Location: "TD",
 		TimeSlot: 2,
 		IsActive: true,
@@ -76,7 +76,7 @@ var user_meals = []models.User{}
 var timePreferences = []models.TimePreference{
 	{
 		UserID:         2,
-		Date:           time.Date(time.Now().Year(), time.Now().Month(), (time.Now().Day() - 1), 0, 0, 0, 0, time.UTC),
+		Date:           time.Date(time.Now().Year(), time.Now().Month(), (time.Now().Day() - 1), 20, 0, 0, 0, time.Local),
 		LunchSlot:      1,
 		DinnerSlot:     2,
 		LunchResponse:  false,
@@ -84,17 +84,17 @@ var timePreferences = []models.TimePreference{
 	},
 	{
 		UserID:         1,
-		Date:           time.Date(time.Now().Year(), time.Now().Month(), (time.Now().Day() - 1), 0, 0, 0, 0, time.UTC),
-		LunchSlot:      2,
-		DinnerSlot:     2,
+		Date:           time.Date(time.Now().Year(), time.Now().Month(), (time.Now().Day() - 1), 20, 0, 0, 0, time.Local),
+		LunchSlot:      1,
+		DinnerSlot:     3,
 		LunchResponse:  true,
 		DinnerResponse: true,
 	},
 	{
 		UserID:         3,
-		Date:           time.Date(time.Now().Year(), time.Now().Month(), (time.Now().Day() - 1), 0, 0, 0, 0, time.UTC),
+		Date:           time.Date(time.Now().Year(), time.Now().Month(), (time.Now().Day() - 1), 20, 0, 0, 0, time.Local),
 		LunchSlot:      2,
-		DinnerSlot:     2,
+		DinnerSlot:     3,
 		LunchResponse:  true,
 		DinnerResponse: true,
 	},
@@ -203,33 +203,52 @@ func Load(db *gorm.DB) {
 
 	user := models.User{}
 	userGotten1, err := user.FindUserByID(db, 1)
+	//db.Model(&userGotten1).Association("Meals")
 	user2 := models.User{}
 	userGotten2, err := user2.FindUserByID(db, 2)
+	//db.Model(&userGotten2).Association("Meals")
 	user3 := models.User{}
 	userGotten3, err := user3.FindUserByID(db, 3)
+	//db.Model(&userGotten3).Association("Meals")
 
-	meal := models.Meal{}
-	mealGotten, err := meal.FindMealByID(db, 1)
+	for i, _ := range meals {
+		meal := models.Meal{}
+		mealGotten, err := meal.FindMealByID(db, uint32(i+1))
+		if err != nil {
+			log.Fatalf("cannot seed users table: %v", err)
+		}
+		db.Unscoped().Model(&mealGotten).Association("Users").Clear()
+	}
 
 	db.Unscoped().Model(&userGotten1).Association("Meals").Clear()
 	db.Unscoped().Model(&userGotten2).Association("Meals").Clear()
 	db.Unscoped().Model(&userGotten3).Association("Meals").Clear()
 
-	db.Model(&mealGotten).Association("Users").Delete(users[2])
-	fmt.Println("here")
+	//db.Unscoped().Model(&mealGotten).Association("Users").Clear()
 
-	db.Model(&userGotten1).Association("Meals").Append([]models.Meal{meals[0]}) // meal 1, user 1
-	db.Model(&userGotten1).Association("Meals").Append([]models.Meal{meals[2]}) // meal 3, user 1
-	db.Model(&userGotten1).Association("Meals").Append([]models.Meal{meals[3]}) // meal 4, user 1
-	db.Model(&userGotten2).Association("Meals").Append([]models.Meal{meals[3]}) // meal 4, user 2
-	db.Model(&userGotten2).Association("Meals").Append([]models.Meal{meals[2]}) // meal 3, user 2
-	db.Model(&userGotten3).Association("Meals").Append([]models.Meal{meals[2]}) // meal 3, user 3
+	//db.Model(&mealGotten).Association("Users").Delete(users[2])
+	//fmt.Println(userGotten1)
+	user = models.User{}
+	userGotten1, err = user.FindUserByID(db, 1)
+	if err != nil {
+		fmt.Println("oops")
+	}
+	/*
+		db.Model(&userGotten1).Association("Meals").Append([]models.Meal{meals[0]}) // meal 1, user 1
+		db.Model(&userGotten1).Association("Meals").Append([]models.Meal{meals[2]}) // meal 3, user 1
+		db.Model(&userGotten1).Association("Meals").Append([]models.Meal{meals[3]}) // meal 4, user 1
+		db.Model(&userGotten2).Association("Meals").Append([]models.Meal{meals[3]}) // meal 4, user 2
+		db.Model(&userGotten2).Association("Meals").Append([]models.Meal{meals[2]}) // meal 3, user 2
+		db.Model(&userGotten3).Association("Meals").Append([]models.Meal{meals[2]}) // meal 3, user 3
+	*/
 
-	db.Model(&mealGotten).Association("Users").Append([]models.User{users[2]}) // meal 1, user 3
-	db.Model(&mealGotten).Association("Users").Append([]models.User{users[1]}) // meal 1, user 2
+	meal := models.Meal{}
+	mealGotten, err := meal.FindMealByID(db, 1)
+	//db.Model(&mealGotten).Association("Users").Append([]models.User{users[2]}) // meal 1, user 3
+	//db.Model(&mealGotten).Association("Users").Append([]models.User{users[1]}) // meal 1, user 2
 
 	//userGotten1.UpdateAUser(db, 1)
-	fmt.Println(userGotten1)
+	//fmt.Println(userGotten1)
 	//db.Save(userGotten1)
 	//fmt.Println(userGotten1.Meals)
 
@@ -238,6 +257,7 @@ func Load(db *gorm.DB) {
 	//fmt.Println(db.Model(&userGotten2).Association("Meals").Find(&meals))
 
 	//exDate := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, time.UTC)
+
 	mealcount := db.Model(&userGotten1).Association("Meals").Count()
 	usercount := db.Model(&mealGotten).Association("Users").Count()
 	fmt.Println(mealcount, "", usercount)

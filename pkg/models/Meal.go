@@ -19,10 +19,11 @@ type Meal struct {
 	UpdatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
 }
 
-func (m *Meal) SaveMeal(db *gorm.DB, mealType string, date time.Time, timeslot uint32) (*Meal, error) {
+func (m *Meal) SaveMeal(db *gorm.DB, mealType string, date time.Time, location string, timeslot uint32) (*Meal, error) {
 	m.MealID = 0
 	m.MealType = mealType
 	m.Date = cleanDate(date)
+	m.Location = location
 	m.TimeSlot = timeslot
 	m.IsActive = true
 	m.CreatedAt = time.Now()
@@ -117,7 +118,7 @@ func (m *Meal) FindTimePrefsByMealID(db *gorm.DB, mid uint32) (*[]TimePreference
 	timePrefs := []TimePreference{}
 	meal, err := m.FindMealByID(db, mid)
 
-	for i := range *users {
+	for i := range userList {
 		timePref := TimePreference{}
 		timePref1, err := timePref.FindTimePrefByUserDate(db, userList[i].ID, meal.Date)
 		if err != nil {
