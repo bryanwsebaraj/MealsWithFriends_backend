@@ -57,37 +57,31 @@ func AddMealMatches(db *gorm.DB) error {
 			timePrefGotten := *timePrefGottenPointer
 			timePrefs = append(timePrefs, timePrefGotten)
 		}
-		//fmt.Println(timePrefs)
 
 		// 4 lunch and 3 dinner slots
 		numLunchSlots := 4
 		numDinnerSlots := 3
-		//var lunch [][]uint32
 		lunch := make([][]uint32, numLunchSlots) // array of userIDs
 		for l, _ := range timePrefs {
 			lunch[timePrefs[l].LunchSlot-1] = append(lunch[timePrefs[l].LunchSlot-1], timePrefs[l].UserID)
 		}
-		fmt.Println(lunch)
 
 		dinner := make([][]uint32, numDinnerSlots) // array of userIDs
 		for m, _ := range timePrefs {
 			dinner[timePrefs[m].DinnerSlot-1] = append(dinner[timePrefs[m].DinnerSlot-1], timePrefs[m].UserID)
 		}
-		fmt.Println(dinner)
 
 		// randomly shuffle users for lunch
 		rand.Seed(time.Now().UnixNano())
 		for n := 0; n < numLunchSlots; n++ {
 			rand.Shuffle(len(lunch[n]), func(i, j int) { lunch[n][i], lunch[n][j] = lunch[n][j], lunch[n][i] })
 		}
-		fmt.Println(lunch)
 
 		// randomly shuffle users for dinner
 		rand.Seed(time.Now().UnixNano())
 		for o := 0; o < numDinnerSlots; o++ {
 			rand.Shuffle(len(dinner[o]), func(i, j int) { dinner[o][i], dinner[o][j] = dinner[o][j], dinner[o][i] })
 		}
-		fmt.Println(dinner)
 
 		// create meals with random location (implement meal location table in future) and randomly pair users based on categories
 		for p := 0; p < numLunchSlots; p++ {
@@ -113,7 +107,6 @@ func AddMealMatches(db *gorm.DB) error {
 					db.Model(&userGotten2).Association("Meals").Append(&mealSaved)
 					db.Model(&userGotten3).Association("Meals").Append(&mealSaved)
 				} else {
-					//fmt.Println("mod 2")
 					meal := models.Meal{}
 					mealSaved, err := meal.SaveMeal(db, "lunch", time.Now(), "commons", uint32(p+1))
 					if err != nil {
@@ -130,9 +123,6 @@ func AddMealMatches(db *gorm.DB) error {
 
 					db.Model(&userGotten1).Association("Meals").Append(mealSaved)
 					db.Model(&userGotten2).Association("Meals").Append(mealSaved)
-
-					//mealCount := db.Model(&userGotten1).Association("Meals").Count()
-					//fmt.Println(mealCount)
 				}
 			}
 
@@ -162,7 +152,6 @@ func AddMealMatches(db *gorm.DB) error {
 					db.Model(&userGotten2).Association("Meals").Append(&mealSaved)
 					db.Model(&userGotten3).Association("Meals").Append(&mealSaved)
 				} else {
-					//fmt.Println("mod 2")
 					meal := models.Meal{}
 					mealSaved, err := meal.SaveMeal(db, "dinner", time.Now(), "Silliman", uint32(p+1))
 					if err != nil {
@@ -179,9 +168,6 @@ func AddMealMatches(db *gorm.DB) error {
 
 					db.Model(&userGotten1).Association("Meals").Append(mealSaved)
 					db.Model(&userGotten2).Association("Meals").Append(mealSaved)
-
-					//mealCount := db.Model(&userGotten1).Association("Meals").Count()
-					//fmt.Println(mealCount)
 				}
 			}
 
@@ -189,4 +175,19 @@ func AddMealMatches(db *gorm.DB) error {
 	}
 	return nil
 
+}
+
+func DeactivateYesterdayMeals(db *gorm.DB) error {
+	meal := models.Meal{}
+	yesterdayTime := time.Date(time.Now().Year(), time.Now().Month(), (time.Now().Day() - 1), 20, 0, 0, 0, time.Local)
+	mealsPointer, err := meal.FindMealsByDate(db, yesterdayTime)
+	if err != nil {
+		return err
+	}
+	meals := *mealsPointer
+	for i, _ := range meals {
+		meals[i].DeactivateMeal(db)
+		meals[i].UpdateMeal(db, meals[i].MealID)
+	}
+	return nil
 }

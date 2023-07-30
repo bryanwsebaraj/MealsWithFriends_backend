@@ -1,7 +1,6 @@
 package seed
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -23,16 +22,16 @@ var users = []models.User{
 	{
 		FirstName:  "George",
 		LastName:   "Washington",
-		Email:      "georgew@freedom.usa",
+		Email:      "georgew@president.usa",
 		Password:   "usa",
 		Gender:     "Male",
 		GradeLevel: "senior",
 		CollegeID:  2,
 	},
 	{
-		FirstName:  "John",
+		FirstName:  "Sam",
 		LastName:   "Adams",
-		Email:      "ja@gmail.com",
+		Email:      "sam@foundingfather.beer",
 		Password:   "usa",
 		Gender:     "Male",
 		GradeLevel: "junior",
@@ -40,6 +39,7 @@ var users = []models.User{
 	},
 }
 
+// sample meals without users associated with them
 var meals = []models.Meal{
 	{
 		MealType: "lunch",
@@ -71,8 +71,7 @@ var meals = []models.Meal{
 	},
 }
 
-var user_meals = []models.User{}
-
+// sameple timepreferences for yesterday (day before boot up)
 var timePreferences = []models.TimePreference{
 	{
 		UserID:         2,
@@ -191,82 +190,22 @@ func Load(db *gorm.DB) {
 
 	}
 
-	for i, _ := range user_meals {
-		errMeal = db.Debug().Model(&models.Meal{}).Create(&meals[i]).Error
-		if errMeal != nil {
-			log.Fatalf("cannot seed users table: %v", errMeal)
-		}
-
-	}
-
-	// move to matching algorithm. how to create new entries in junction table
-
-	user := models.User{}
-	userGotten1, err := user.FindUserByID(db, 1)
-	//db.Model(&userGotten1).Association("Meals")
-	user2 := models.User{}
-	userGotten2, err := user2.FindUserByID(db, 2)
-	//db.Model(&userGotten2).Association("Meals")
-	user3 := models.User{}
-	userGotten3, err := user3.FindUserByID(db, 3)
-	//db.Model(&userGotten3).Association("Meals")
-
 	for i, _ := range meals {
 		meal := models.Meal{}
 		mealGotten, err := meal.FindMealByID(db, uint32(i+1))
 		if err != nil {
-			log.Fatalf("cannot seed users table: %v", err)
+			log.Fatalf("cannot clear user associations: %v", err)
 		}
 		db.Unscoped().Model(&mealGotten).Association("Users").Clear()
 	}
-
-	db.Unscoped().Model(&userGotten1).Association("Meals").Clear()
-	db.Unscoped().Model(&userGotten2).Association("Meals").Clear()
-	db.Unscoped().Model(&userGotten3).Association("Meals").Clear()
-
-	//db.Unscoped().Model(&mealGotten).Association("Users").Clear()
-
-	//db.Model(&mealGotten).Association("Users").Delete(users[2])
-	//fmt.Println(userGotten1)
-	user = models.User{}
-	userGotten1, err = user.FindUserByID(db, 1)
-	if err != nil {
-		fmt.Println("oops")
-	}
-	/*
-		db.Model(&userGotten1).Association("Meals").Append([]models.Meal{meals[0]}) // meal 1, user 1
-		db.Model(&userGotten1).Association("Meals").Append([]models.Meal{meals[2]}) // meal 3, user 1
-		db.Model(&userGotten1).Association("Meals").Append([]models.Meal{meals[3]}) // meal 4, user 1
-		db.Model(&userGotten2).Association("Meals").Append([]models.Meal{meals[3]}) // meal 4, user 2
-		db.Model(&userGotten2).Association("Meals").Append([]models.Meal{meals[2]}) // meal 3, user 2
-		db.Model(&userGotten3).Association("Meals").Append([]models.Meal{meals[2]}) // meal 3, user 3
-	*/
-
-	meal := models.Meal{}
-	mealGotten, err := meal.FindMealByID(db, 1)
-	//db.Model(&mealGotten).Association("Users").Append([]models.User{users[2]}) // meal 1, user 3
-	//db.Model(&mealGotten).Association("Users").Append([]models.User{users[1]}) // meal 1, user 2
-
-	//userGotten1.UpdateAUser(db, 1)
-	//fmt.Println(userGotten1)
-	//db.Save(userGotten1)
-	//fmt.Println(userGotten1.Meals)
-
-	//listmeals := db.Model(&userGotten1).Association("Meals").Find(&meals)
-	//fmt.Println(listmeals)
-	//fmt.Println(db.Model(&userGotten2).Association("Meals").Find(&meals))
-
-	//exDate := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, time.UTC)
-
-	mealcount := db.Model(&userGotten1).Association("Meals").Count()
-	usercount := db.Model(&mealGotten).Association("Users").Count()
-	fmt.Println(mealcount, "", usercount)
 	/*
 		var users10 []models.User
 		err = db.Model(&models.User{}).Preload("Meals").Find(&users10).Error
 		fmt.Println(users10)
+
+		mealGotten := models.Meal{}
+		fmt.Println(mealGotten.FindUsersByMealID(db, 1))
+		fmt.Println(mealGotten.FindTimePrefsByMealID(db, 1))
 	*/
-	fmt.Println("space")
-	fmt.Println(mealGotten.FindUsersByMealID(db, 1))
-	fmt.Println(mealGotten.FindTimePrefsByMealID(db, 1))
+
 }

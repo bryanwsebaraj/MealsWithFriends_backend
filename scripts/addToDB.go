@@ -19,6 +19,7 @@ func AddOnTime(db *gorm.DB) {
 		if now.Hour() == now.Hour() && now.Minute() == now.Minute() {
 			fmt.Println("Adding new meal match entries in DB")
 			AddMealMatches(db)
+			DeactivateYesterdayMeals(db)
 		}
 
 		// Wait before checking again

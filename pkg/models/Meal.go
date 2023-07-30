@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -46,6 +47,20 @@ func ValidateMealType(mealType string) (string, error) {
 
 func (m *Meal) DeactivateMeal(db *gorm.DB) {
 	m.IsActive = false
+}
+
+func (m *Meal) UpdateMeal(db *gorm.DB, mid uint32) error {
+	db = db.Debug().Model(&Meal{}).Where("meal_id = ?", mid).Take(&Meal{}).UpdateColumns(
+		map[string]interface{}{
+			"is_active":  m.IsActive,
+			"updated_at": time.Now(),
+		},
+	)
+
+	if db.Error != nil {
+		return db.Error
+	}
+	return nil
 }
 
 func (m *Meal) FindMealsByDate(db *gorm.DB, date time.Time) (*[]Meal, error) {
@@ -101,13 +116,25 @@ func (m *Meal) FindUsersByMealID(db *gorm.DB, mid uint32) (*[]User, error) {
 	if err != nil {
 		return &[]User{}, errors.New("Meal Not Found")
 	}
+	/*
+		err = db.Model(&Meal{}).Preload("Users").Take(&mealGotten).Error // this is blank
+		if err != nil {
+			return &[]User{}, errors.New("Users Not Found")
+		}
 
-	err = db.Model(&Meal{}).Preload("Users").Take(&mealGotten).Error
+		users := mealGotten.Users
+		return &users, err
+	*/
+	// edit below
+	fmt.Println(mealGotten) // delete
+
+	err = db.Model(&Meal{}).Preload("Users").Take(&mealGotten).Error // this is blank
 	if err != nil {
 		return &[]User{}, errors.New("Users Not Found")
 	}
 
 	users := mealGotten.Users
+	fmt.Println(users) // delete
 	return &users, err
 
 }
