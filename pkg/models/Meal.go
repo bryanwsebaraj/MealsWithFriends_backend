@@ -2,7 +2,6 @@ package models
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -116,25 +115,13 @@ func (m *Meal) FindUsersByMealID(db *gorm.DB, mid uint32) (*[]User, error) {
 	if err != nil {
 		return &[]User{}, errors.New("Meal Not Found")
 	}
-	/*
-		err = db.Model(&Meal{}).Preload("Users").Take(&mealGotten).Error // this is blank
-		if err != nil {
-			return &[]User{}, errors.New("Users Not Found")
-		}
 
-		users := mealGotten.Users
-		return &users, err
-	*/
-	// edit below
-	fmt.Println(mealGotten) // delete
-
-	err = db.Model(&Meal{}).Preload("Users").Take(&mealGotten).Error // this is blank
+	err = db.Model(&Meal{}).Preload("Users").Take(&mealGotten).Error
 	if err != nil {
 		return &[]User{}, errors.New("Users Not Found")
 	}
 
 	users := mealGotten.Users
-	fmt.Println(users) // delete
 	return &users, err
 
 }
