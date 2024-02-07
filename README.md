@@ -1,6 +1,6 @@
 # Meals With Friends
 
-Backend of a novel application to match users based on various preferences/university and generate a convenient time/location to meet for a meal. Built with Go, Gorilla Mux, GORM, and MongoDB. Codebase adhears to standard [Go project layout](https://github.com/golang-standards/project-layout)
+Backend of a novel application to match users based on various preferences/university and generate a convenient time/location to meet for a meal. Built with Go, Gorilla Mux, GORM, and Postgresql. Codebase adhears to standard [Go project layout](https://github.com/golang-standards/project-layout)
 
 
 ## Features
